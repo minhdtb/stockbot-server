@@ -1,17 +1,24 @@
 package com.minhdtb.lib;
 
+import com.google.common.io.LittleEndianDataInputStream;
+
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
 abstract class MetaStockElement {
 
+    protected LittleEndianDataInputStream is;
+
     abstract int encode(byte[] buffer, int i);
+
+    abstract void parse() throws IOException;
 
     private static long getUnsignedInt(int x) {
         return x & 0x00000000ffffffffL;
     }
 
-    Date DateFromSingle(float s) {
+    private Date DateFromSingle(float s) {
         int si = (int) s;
         int d = si % 100;
         si = si / 100;
@@ -31,7 +38,7 @@ abstract class MetaStockElement {
         return cal.getTime();
     }
 
-    float MBFToFloat(int value) {
+    private float MBFToFloat(int value) {
         long tempValue = getUnsignedInt(value);
         if (tempValue == 0)
             return 0.0f;
@@ -42,7 +49,37 @@ abstract class MetaStockElement {
         return Float.intBitsToFloat((int) tempValue);
     }
 
-    float FloatToMBF(float value) {
+    private float FloatToMBF(float value) {
         return 0;
+    }
+
+    void Skip(int len) throws IOException {
+        is.skip(len);
+    }
+
+    String readString(int len) throws IOException {
+        byte[] buffer = new byte[len];
+        is.read(buffer);
+        return new String(buffer).split("\0")[0];
+    }
+
+    Date readDate() throws IOException {
+        return DateFromSingle(is.readFloat());
+    }
+
+    Date readMBFDate() throws IOException {
+        return DateFromSingle(MBFToFloat(is.readInt()));
+    }
+
+    int readUnsignedByte() throws IOException {
+        return is.readUnsignedByte();
+    }
+
+    int readUnsignedShort() throws IOException {
+        return is.readUnsignedShort();
+    }
+
+    float readMBFFloat() throws IOException {
+        return MBFToFloat(is.readInt());
     }
 }

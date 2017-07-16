@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class MetaStockEMaster {
+public final class MetaStockEMaster {
 
     private MetaStockEMasterHeader header;
     private List<MetaStockEMasterRecord> records = new ArrayList<>();

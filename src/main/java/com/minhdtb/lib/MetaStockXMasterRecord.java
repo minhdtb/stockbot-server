@@ -4,7 +4,7 @@ import com.google.common.io.LittleEndianDataInputStream;
 import lombok.Data;
 
 @Data
-public class MetaStockXMasterRecord {
+public final class MetaStockXMasterRecord {
 
     MetaStockXMasterRecord(LittleEndianDataInputStream is) {
 

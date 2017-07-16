@@ -1,12 +1,15 @@
 package com.minhdtb.lib;
 
-
 import com.google.common.io.LittleEndianDataInputStream;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 import java.util.Date;
 
-public class MetaStockEMasterRecord extends MetaStockElement {
+@EqualsAndHashCode(callSuper = true)
+@Data
+public final class MetaStockEMasterRecord extends MetaStockElement {
 
     private int fileNumber;
     private int totalFields;
@@ -28,31 +31,31 @@ public class MetaStockEMasterRecord extends MetaStockElement {
     }
 
     MetaStockEMasterRecord(LittleEndianDataInputStream is) throws IOException {
-        is.read(new byte[2]);
-        fileNumber = is.readUnsignedByte();
-        is.read(new byte[3]);
-        totalFields = is.readUnsignedByte();
-        is.read(new byte[4]);
-        byte[] symbolBuffer = new byte[14];
-        is.read(symbolBuffer);
-        symbol = new String(symbolBuffer).split("\0")[0];
-        is.read(new byte[7]);
-        byte[] descriptionBuffer = new byte[16];
-        is.read(descriptionBuffer);
-        description = new String(descriptionBuffer).split("\0")[0];
-        is.read(new byte[12]);
-        byte[] periodBuffer = new byte[1];
-        is.read(periodBuffer);
-        period = new String(periodBuffer);
-        is.read(new byte[3]);
-        startDate = DateFromSingle(is.readFloat());
-        is.read(new byte[4]);
-        endDate = DateFromSingle(is.readFloat());
-        is.read(new byte[116]);
+        this.is = is;
+        this.parse();
     }
 
     @Override
     int encode(byte[] buffer, int i) {
         return 0;
+    }
+
+    @Override
+    void parse() throws IOException {
+        Skip(2);
+        fileNumber = readUnsignedByte();
+        Skip(3);
+        totalFields = readUnsignedByte();
+        Skip(4);
+        symbol = readString(14);
+        is.skip(7);
+        description = readString(16);
+        Skip(12);
+        period = readString(1);
+        Skip(3);
+        startDate = readDate();
+        Skip(4);
+        endDate = readDate();
+        Skip(116);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Data
-public class MetaStockXMaster {
+public final class MetaStockXMaster {
 
     private MetaStockXMasterHeader header;
     private List<MetaStockXMasterRecord> records = new ArrayList<>();

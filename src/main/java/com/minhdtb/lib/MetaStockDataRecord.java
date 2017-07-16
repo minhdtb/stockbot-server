@@ -11,7 +11,7 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class MetaStockDataRecord extends MetaStockElement {
+public final class MetaStockDataRecord extends MetaStockElement {
 
     private Date date;
     private float open;
@@ -32,18 +32,24 @@ public class MetaStockDataRecord extends MetaStockElement {
     }
 
     MetaStockDataRecord(LittleEndianDataInputStream is) throws IOException {
-        date = DateFromSingle(MBFToFloat(is.readInt()));
-        open = MBFToFloat(is.readInt());
-        high = MBFToFloat(is.readInt());
-        low = MBFToFloat(is.readInt());
-        close = MBFToFloat(is.readInt());
-        volume = MBFToFloat(is.readInt());
-        openInterest = MBFToFloat(is.readInt());
+        this.is = is;
+        this.parse();
     }
 
     @Override
     int encode(byte[] buffer, int i) {
         return 0;
+    }
+
+    @Override
+    void parse() throws IOException {
+        date = readMBFDate();
+        open = readMBFFloat();
+        high = readMBFFloat();
+        low = readMBFFloat();
+        close = readMBFFloat();
+        volume = readMBFFloat();
+        openInterest = readMBFFloat();
     }
 
     @Override

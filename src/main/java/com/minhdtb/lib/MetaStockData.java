@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class MetaStockData {
+public final class MetaStockData {
 
     private MetaStockDataHeader header;
     private List<MetaStockDataRecord> records = new ArrayList<>();

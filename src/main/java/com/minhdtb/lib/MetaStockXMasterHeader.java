@@ -2,11 +2,13 @@ package com.minhdtb.lib;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class MetaStockXMasterHeader extends MetaStockElement {
+public final class MetaStockXMasterHeader extends MetaStockElement {
 
     private int totalFiles;
     private int totalFilesEx;
@@ -19,17 +21,23 @@ public class MetaStockXMasterHeader extends MetaStockElement {
     }
 
     MetaStockXMasterHeader(LittleEndianDataInputStream is) throws IOException {
-        is.read(new byte[10]);
-        totalFiles = is.readUnsignedShort();
-        is.read(new byte[2]);
-        totalFilesEx = is.readUnsignedShort();
-        is.read(new byte[2]);
-        lastFileNumber = is.readUnsignedShort();
-        is.read(new byte[130]);
+        this.is = is;
+        this.parse();
     }
 
     @Override
     int encode(byte[] buffer, int i) {
         return 0;
+    }
+
+    @Override
+    void parse() throws IOException {
+        Skip(10);
+        totalFiles = readUnsignedShort();
+        Skip(2);
+        totalFilesEx = readUnsignedShort();
+        Skip(2);
+        lastFileNumber = readUnsignedShort();
+        Skip(130);
     }
 }

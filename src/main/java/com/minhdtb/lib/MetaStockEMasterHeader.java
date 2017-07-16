@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class MetaStockEMasterHeader extends MetaStockElement {
+public final class MetaStockEMasterHeader extends MetaStockElement {
 
     private int totalFiles;
     private int lastFileNumber;
@@ -19,13 +19,19 @@ public class MetaStockEMasterHeader extends MetaStockElement {
     }
 
     MetaStockEMasterHeader(LittleEndianDataInputStream is) throws IOException {
-        totalFiles = is.readUnsignedShort();
-        lastFileNumber = is.readUnsignedShort();
-        is.read(new byte[188]);
+        this.is = is;
+        this.parse();
     }
 
     @Override
     int encode(byte[] buffer, int i) {
         return 0;
+    }
+
+    @Override
+    void parse() throws IOException {
+        totalFiles = readUnsignedShort();
+        lastFileNumber = readUnsignedShort();
+        Skip(188);
     }
 }
