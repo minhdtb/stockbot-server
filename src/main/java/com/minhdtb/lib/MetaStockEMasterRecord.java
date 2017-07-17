@@ -31,8 +31,7 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
     }
 
     MetaStockEMasterRecord(LittleEndianDataInputStream is) throws IOException {
-        this.is = is;
-        this.parse();
+        super(is);
     }
 
     @Override
@@ -48,7 +47,7 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
         totalFields = readUnsignedByte();
         Skip(4);
         symbol = readString(14);
-        is.skip(7);
+        Skip(7);
         description = readString(16);
         Skip(12);
         period = readString(1);

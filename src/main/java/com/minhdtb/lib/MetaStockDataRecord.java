@@ -32,8 +32,7 @@ public final class MetaStockDataRecord extends MetaStockElement {
     }
 
     MetaStockDataRecord(LittleEndianDataInputStream is) throws IOException {
-        this.is = is;
-        this.parse();
+        super(is);
     }
 
     @Override

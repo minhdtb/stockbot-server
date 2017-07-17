@@ -19,8 +19,7 @@ public final class MetaStockEMasterHeader extends MetaStockElement {
     }
 
     MetaStockEMasterHeader(LittleEndianDataInputStream is) throws IOException {
-        this.is = is;
-        this.parse();
+        super(is);
     }
 
     @Override

@@ -11,18 +11,17 @@ import java.io.IOException;
 public final class MetaStockXMasterHeader extends MetaStockElement {
 
     private int totalFiles;
-    private int totalFilesEx;
+    private int totalFilesExtend;
     private int lastFileNumber;
 
-    public MetaStockXMasterHeader(int totalFiles, int totalFilesEx, int lastFileNumber) {
+    public MetaStockXMasterHeader(int totalFiles, int totalFilesExtend, int lastFileNumber) {
         this.totalFiles = totalFiles;
-        this.totalFilesEx = totalFilesEx;
+        this.totalFilesExtend = totalFilesExtend;
         this.lastFileNumber = lastFileNumber;
     }
 
     MetaStockXMasterHeader(LittleEndianDataInputStream is) throws IOException {
-        this.is = is;
-        this.parse();
+        super(is);
     }
 
     @Override
@@ -35,7 +34,7 @@ public final class MetaStockXMasterHeader extends MetaStockElement {
         Skip(10);
         totalFiles = readUnsignedShort();
         Skip(2);
-        totalFilesEx = readUnsignedShort();
+        totalFilesExtend = readUnsignedShort();
         Skip(2);
         lastFileNumber = readUnsignedShort();
         Skip(130);

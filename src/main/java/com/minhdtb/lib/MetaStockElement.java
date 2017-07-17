@@ -5,27 +5,30 @@ import com.google.common.io.LittleEndianDataInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 abstract class MetaStockElement {
-
-    protected LittleEndianDataInputStream is;
 
     abstract int encode(byte[] buffer, int i);
 
     abstract void parse() throws IOException;
 
+    private LittleEndianDataInputStream is;
+
+    MetaStockElement() {
+
+    }
+
+    MetaStockElement(LittleEndianDataInputStream is) throws IOException {
+        this.is = is;
+        this.parse();
+    }
+
     private static long getUnsignedInt(int x) {
         return x & 0x00000000ffffffffL;
     }
 
-    private Date DateFromSingle(float s) {
-        int si = (int) s;
-        int d = si % 100;
-        si = si / 100;
-        int m = si % 100;
-        si = si / 100;
-        int y = si + 1900;
-
+    private Date getDate(int y, int m, int d) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, y);
         cal.set(Calendar.MONTH, m - 1);
@@ -36,6 +39,17 @@ abstract class MetaStockElement {
         cal.set(Calendar.MILLISECOND, 0);
 
         return cal.getTime();
+    }
+
+    private Date getFloatDate(float value) {
+        int si = (int) value;
+        int d = si % 100;
+        si = si / 100;
+        int m = si % 100;
+        si = si / 100;
+        int y = si + 1900;
+
+        return getDate(y, m, d);
     }
 
     private float MBFToFloat(int value) {
@@ -64,11 +78,24 @@ abstract class MetaStockElement {
     }
 
     Date readDate() throws IOException {
-        return DateFromSingle(is.readFloat());
+        return getFloatDate(is.readFloat());
+    }
+
+    Date readDateInt() throws IOException {
+        String dateString = String.valueOf(is.readInt());
+        if (dateString.length() == 8) {
+            int y = Integer.parseInt(dateString.substring(0, 4));
+            int m = Integer.parseInt(dateString.substring(4, 6));
+            int d = Integer.parseInt(dateString.substring(6, 8));
+
+            return getDate(y, m, d);
+        }
+
+        return getDate(1970, 1, 1);
     }
 
     Date readMBFDate() throws IOException {
-        return DateFromSingle(MBFToFloat(is.readInt()));
+        return getFloatDate(MBFToFloat(is.readInt()));
     }
 
     int readUnsignedByte() throws IOException {
