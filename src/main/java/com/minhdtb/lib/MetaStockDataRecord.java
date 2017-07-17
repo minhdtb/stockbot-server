@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -49,13 +47,5 @@ public final class MetaStockDataRecord extends MetaStockElement {
         close = readMBFFloat();
         volume = readMBFFloat();
         openInterest = readMBFFloat();
-    }
-
-    @Override
-    public String toString() {
-        DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        String sdt = df.format(date);
-        return String.format("MetaStockDataRecord (date = %s, open = %f, high = %f, low = %f, close = %f, volume = %f, " +
-                "open interest = %f)", sdt, open, high, low, close, volume, openInterest);
     }
 }

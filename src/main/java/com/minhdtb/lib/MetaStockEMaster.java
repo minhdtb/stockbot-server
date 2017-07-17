@@ -20,7 +20,7 @@ public final class MetaStockEMaster {
     public MetaStockEMaster(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockEMasterHeader(is);
-            for (int i = 0; i < header.getLastFileNumber(); i++) {
+            for (int i = 0; i < header.getTotalFiles(); i++) {
                 MetaStockEMasterRecord data = new MetaStockEMasterRecord(is);
                 records.add(data);
             }

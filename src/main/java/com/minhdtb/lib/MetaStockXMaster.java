@@ -22,7 +22,7 @@ public final class MetaStockXMaster {
     public MetaStockXMaster(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockXMasterHeader(is);
-            for (int i = 0; i < header.getLastFileNumber(); i++) {
+            for (int i = 0; i < header.getTotalFiles(); i++) {
                 MetaStockXMasterRecord data = new MetaStockXMasterRecord(is);
                 records.add(data);
             }
