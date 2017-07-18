@@ -9,8 +9,11 @@ public class MainApp {
     public static void main(String[] args) {
 
         try {
-            MetaStockData data = new MetaStockData(new LittleEndianDataInputStream(new FileInputStream("E:\\test\\F1205.MWD")));
+            MetaStockData data = new MetaStockData(new LittleEndianDataInputStream(new FileInputStream("E:\\test\\F1037.MWD")));
             System.out.println(data.getHeader());
+            MetaStockDataRecord record = data.getRecords().get(0);
+            System.out.println(record.getDate());
+            System.out.println(record.getOpen());
 
             MetaStockEMaster eMaster = new MetaStockEMaster(new LittleEndianDataInputStream(new FileInputStream("E:\\test\\EMASTER")));
             System.out.println(eMaster.getHeader());

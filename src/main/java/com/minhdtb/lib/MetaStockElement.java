@@ -3,9 +3,10 @@ package com.minhdtb.lib;
 import com.google.common.io.LittleEndianDataInputStream;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 abstract class MetaStockElement {
 
@@ -22,10 +23,6 @@ abstract class MetaStockElement {
     MetaStockElement(LittleEndianDataInputStream is) throws IOException {
         this.is = is;
         this.parse();
-    }
-
-    private static long getUnsignedInt(int x) {
-        return x & 0x00000000ffffffffL;
     }
 
     private Date getDate(int y, int m, int d) {
@@ -52,19 +49,50 @@ abstract class MetaStockElement {
         return getDate(y, m, d);
     }
 
-    private float MBFToFloat(int value) {
-        long tempValue = getUnsignedInt(value);
-        if (tempValue == 0)
-            return 0.0f;
-        tempValue = (((tempValue - 0x02000000) & 0xFF000000) >> 1) |
-                ((tempValue & 0x00800000) << 8) |
-                (tempValue & 0x007FFFFF);
+    private float MBFToFloat(float value) {
+        byte[] msbin = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
+        byte[] ieee = new byte[4];
+        int sign = msbin[2] & 0x80;
+        int ieee_exp;
 
-        return Float.intBitsToFloat((int) tempValue);
+        if (msbin[3] == 0) return 0;
+
+        ieee[3] |= sign;
+        ieee_exp = (msbin[3] & 0xFF) - 2;
+        ieee[3] |= ieee_exp >> 1;
+
+        ieee[2] |= ieee_exp << 7;
+        ieee[2] |= msbin[2] & 0x7f;
+
+        ieee[1] = msbin[1];
+        ieee[0] = msbin[0];
+
+        return ByteBuffer.wrap(ieee).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
     private float FloatToMBF(float value) {
-        return 0;
+        byte[] ieee = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
+        byte[] msbin = new byte[4];
+        int msbin_exp = 0x00;
+        int sign = ieee[3] & 0x80;
+
+        msbin_exp |= ieee[3] << 1;
+        msbin_exp |= (ieee[2] & 0xFF) >> 7;
+
+        if (msbin_exp == 0xfe)
+            return 1;
+
+        msbin_exp += 2;
+
+        msbin[3] = (byte) msbin_exp;
+
+        msbin[2] |= sign;
+        msbin[2] |= ieee[2] & 0x7f;
+
+        msbin[1] = ieee[1];
+        msbin[0] = ieee[0];
+
+        return ByteBuffer.wrap(msbin).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
     void Skip(int len) throws IOException {
@@ -82,20 +110,18 @@ abstract class MetaStockElement {
     }
 
     Date readDateInt() throws IOException {
-        String dateString = String.valueOf(is.readInt());
-        if (dateString.length() == 8) {
-            int y = Integer.parseInt(dateString.substring(0, 4));
-            int m = Integer.parseInt(dateString.substring(4, 6));
-            int d = Integer.parseInt(dateString.substring(6, 8));
+        int si = is.readInt();
+        int d = si % 100;
+        si = si / 100;
+        int m = si % 100;
+        si = si / 100;
+        int y = si;
 
-            return getDate(y, m, d);
-        }
-
-        return getDate(1970, 1, 1);
+        return getDate(y, m, d);
     }
 
     Date readMBFDate() throws IOException {
-        return getFloatDate(MBFToFloat(is.readInt()));
+        return getFloatDate(readMBFFloat());
     }
 
     int readUnsignedByte() throws IOException {
@@ -107,6 +133,6 @@ abstract class MetaStockElement {
     }
 
     float readMBFFloat() throws IOException {
-        return MBFToFloat(is.readInt());
+        return MBFToFloat(is.readFloat());
     }
 }
