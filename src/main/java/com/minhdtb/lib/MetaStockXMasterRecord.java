@@ -38,12 +38,12 @@ public final class MetaStockXMasterRecord extends MetaStockElement {
         Skip(2);
         fileNumber = readUnsignedShort();
         Skip(13);
-        startDate = readDateInt();
+        startDate = readIntDate();
         Skip(20);
-        endDate = readDateInt();
-        firstDate = readDateInt();
+        endDate = readIntDate();
+        firstDate = readIntDate();
         Skip(4);
-        lastDate = readDateInt();
+        lastDate = readIntDate();
         Skip(30);
     }
 }

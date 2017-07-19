@@ -52,9 +52,9 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
         Skip(12);
         period = readString(1);
         Skip(3);
-        startDate = readDate();
+        startDate = readFloatDate();
         Skip(4);
-        endDate = readDate();
+        endDate = readFloatDate();
         Skip(116);
     }
 }

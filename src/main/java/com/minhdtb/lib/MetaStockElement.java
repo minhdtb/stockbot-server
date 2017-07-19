@@ -38,8 +38,8 @@ abstract class MetaStockElement {
         return cal.getTime();
     }
 
-    private Date getFloatDate(float value) {
-        int si = (int) value;
+    private Date getDate(int date) {
+        int si = date;
         int d = si % 100;
         si = si / 100;
         int m = si % 100;
@@ -53,15 +53,15 @@ abstract class MetaStockElement {
         byte[] msbin = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
         byte[] ieee = new byte[4];
         int sign = msbin[2] & 0x80;
-        int ieee_exp;
+        int ieeeExp;
 
         if (msbin[3] == 0) return 0;
 
         ieee[3] |= sign;
-        ieee_exp = (msbin[3] & 0xFF) - 2;
-        ieee[3] |= ieee_exp >> 1;
+        ieeeExp = (msbin[3] & 0xFF) - 2;
+        ieee[3] |= ieeeExp >> 1;
 
-        ieee[2] |= ieee_exp << 7;
+        ieee[2] |= ieeeExp << 7;
         ieee[2] |= msbin[2] & 0x7f;
 
         ieee[1] = msbin[1];
@@ -73,18 +73,18 @@ abstract class MetaStockElement {
     private float FloatToMBF(float value) {
         byte[] ieee = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
         byte[] msbin = new byte[4];
-        int msbin_exp = 0x00;
+        int msbinExp = 0x00;
         int sign = ieee[3] & 0x80;
 
-        msbin_exp |= ieee[3] << 1;
-        msbin_exp |= (ieee[2] & 0xFF) >> 7;
+        msbinExp |= ieee[3] << 1;
+        msbinExp |= (ieee[2] & 0xFF) >> 7;
 
-        if (msbin_exp == 0xfe)
+        if (msbinExp == 0xfe)
             return 1;
 
-        msbin_exp += 2;
+        msbinExp += 2;
 
-        msbin[3] = (byte) msbin_exp;
+        msbin[3] = (byte) msbinExp;
 
         msbin[2] |= sign;
         msbin[2] |= ieee[2] & 0x7f;
@@ -105,23 +105,16 @@ abstract class MetaStockElement {
         return new String(buffer).split("\0")[0];
     }
 
-    Date readDate() throws IOException {
-        return getFloatDate(is.readFloat());
+    Date readFloatDate() throws IOException {
+        return getDate((int) is.readFloat());
     }
 
-    Date readDateInt() throws IOException {
-        int si = is.readInt();
-        int d = si % 100;
-        si = si / 100;
-        int m = si % 100;
-        si = si / 100;
-        int y = si;
-
-        return getDate(y, m, d);
+    Date readIntDate() throws IOException {
+        return getDate(is.readInt());
     }
 
     Date readMBFDate() throws IOException {
-        return getFloatDate(readMBFFloat());
+        return getDate((int) readMBFFloat());
     }
 
     int readUnsignedByte() throws IOException {
