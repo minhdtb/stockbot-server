@@ -36,7 +36,20 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
 
     @Override
     int encode(byte[] buffer) {
-        return 0;
+        int len = 2;
+
+        byte[] tmpBuffer = getByteArray((byte) fileNumber);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 3;
+
+        tmpBuffer = getByteArray((byte) totalFields);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 4;
+
+        tmpBuffer = getStringArray(symbol);
+        len += copyBuffer(tmpBuffer, buffer, len);
+
+        return len;
     }
 
     @Override

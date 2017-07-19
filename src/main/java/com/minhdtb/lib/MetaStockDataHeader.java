@@ -28,20 +28,14 @@ public final class MetaStockDataHeader extends MetaStockElement {
     int encode(byte[] buffer) {
         int len = 0;
 
-        byte[] tmpBuffer = ByteBuffer.allocate(2)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .putShort((short) totalRecords)
-                .array();
-        System.arraycopy(tmpBuffer, 0, buffer, 0, tmpBuffer.length);
-        len += tmpBuffer.length;
+        byte[] tmpBuffer = getShortArray((short) totalRecords);
+        len += copyBuffer(tmpBuffer, buffer, len);
 
-        tmpBuffer = ByteBuffer.allocate(2)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .putShort((short) lastRecord)
-                .array();
-        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
-        len += tmpBuffer.length;
+        tmpBuffer = getShortArray((short) lastRecord);
+        len += copyBuffer(tmpBuffer, buffer, len);
+
         len += 24;
+
         return len;
     }
 

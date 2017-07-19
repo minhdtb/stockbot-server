@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -24,7 +26,17 @@ public final class MetaStockEMasterHeader extends MetaStockElement {
 
     @Override
     int encode(byte[] buffer) {
-        return 0;
+        int len = 0;
+
+        byte[] tmpBuffer = getShortArray((short) totalFiles);
+        len += copyBuffer(tmpBuffer, buffer, len);
+
+        tmpBuffer = getShortArray((short) lastFileNumber);
+        len += copyBuffer(tmpBuffer, buffer, len);
+
+        len += 188;
+
+        return len;
     }
 
     @Override

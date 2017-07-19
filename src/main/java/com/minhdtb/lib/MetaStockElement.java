@@ -144,4 +144,31 @@ abstract class MetaStockElement {
 
         return ret;
     }
+
+    byte[] getShortArray(short value) {
+        return ByteBuffer.allocate(2)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putShort(value)
+                .array();
+    }
+
+    byte[] getByteArray(byte value) {
+        return new byte[]{value};
+    }
+
+    byte[] getFloatArray(float value) {
+        return ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(value)
+                .array();
+    }
+
+    byte[] getStringArray(String value) {
+        return value.getBytes();
+    }
+
+    int copyBuffer(byte[] src, byte[] dst, int pos) {
+        System.arraycopy(src, 0, dst, pos, src.length);
+        return src.length;
+    }
 }

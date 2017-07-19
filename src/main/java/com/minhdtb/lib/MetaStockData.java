@@ -57,4 +57,8 @@ public final class MetaStockData {
     public void append(MetaStockDataRecord record) {
         records.add(record);
     }
+
+    public void remove(int index) {
+        records.remove(index);
+    }
 }
