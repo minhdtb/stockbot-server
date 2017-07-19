@@ -7,10 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 abstract class MetaStockElement {
 
-    abstract int encode(byte[] buffer, int i);
+    abstract int encode(byte[] buffer);
 
     abstract void parse() throws IOException;
 
@@ -38,13 +39,13 @@ abstract class MetaStockElement {
         return cal.getTime();
     }
 
-    private Date getDate(int date) {
+    private Date IntToDate(int date, boolean flag) {
         int si = date;
         int d = si % 100;
         si = si / 100;
         int m = si % 100;
         si = si / 100;
-        int y = si + 1900;
+        int y = si + (flag ? 1900 : 0);
 
         return getDate(y, m, d);
     }
@@ -70,7 +71,7 @@ abstract class MetaStockElement {
         return ByteBuffer.wrap(ieee).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
-    private float FloatToMBF(float value) {
+    float FloatToMBF(float value) {
         byte[] ieee = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
         byte[] msbin = new byte[4];
         int msbinExp = 0x00;
@@ -106,15 +107,15 @@ abstract class MetaStockElement {
     }
 
     Date readFloatDate() throws IOException {
-        return getDate((int) is.readFloat());
+        return IntToDate((int) is.readFloat(), true);
     }
 
     Date readIntDate() throws IOException {
-        return getDate(is.readInt());
+        return IntToDate(is.readInt(), false);
     }
 
     Date readMBFDate() throws IOException {
-        return getDate((int) readMBFFloat());
+        return IntToDate((int) readMBFFloat(), true);
     }
 
     int readUnsignedByte() throws IOException {
@@ -127,5 +128,20 @@ abstract class MetaStockElement {
 
     float readMBFFloat() throws IOException {
         return MBFToFloat(is.readFloat());
+    }
+
+    int DateToInt(Date date, boolean flag) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        int year = cal.get(Calendar.YEAR) - (flag ? 1900 : 0);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        int ret = year;
+        ret = ret * 100 + month;
+        ret = ret * 100 + day;
+
+        return ret;
     }
 }

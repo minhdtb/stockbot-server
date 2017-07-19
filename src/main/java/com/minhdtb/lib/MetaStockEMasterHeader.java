@@ -23,7 +23,7 @@ public final class MetaStockEMasterHeader extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer, int i) {
+    int encode(byte[] buffer) {
         return 0;
     }
 

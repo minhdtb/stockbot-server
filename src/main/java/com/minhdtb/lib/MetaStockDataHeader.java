@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,8 +25,24 @@ public final class MetaStockDataHeader extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer, int i) {
-        return 0;
+    int encode(byte[] buffer) {
+        int len = 0;
+
+        byte[] tmpBuffer = ByteBuffer.allocate(2)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putShort((short) totalRecords)
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, 0, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(2)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putShort((short) lastRecord)
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+        len += 24;
+        return len;
     }
 
     @Override

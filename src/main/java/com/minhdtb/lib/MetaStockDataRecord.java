@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -34,8 +36,59 @@ public final class MetaStockDataRecord extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer, int i) {
-        return 0;
+    int encode(byte[] buffer) {
+        int len = 0;
+
+        byte[] tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(DateToInt(date, true)))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(open))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(high))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(low))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(close))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(volume))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        tmpBuffer = ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putFloat(FloatToMBF(openInterest))
+                .array();
+        System.arraycopy(tmpBuffer, 0, buffer, len, tmpBuffer.length);
+        len += tmpBuffer.length;
+
+        return len;
     }
 
     @Override
