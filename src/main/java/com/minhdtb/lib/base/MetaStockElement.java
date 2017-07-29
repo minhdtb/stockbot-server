@@ -102,7 +102,8 @@ public abstract class MetaStockElement {
     protected String readString(int len) throws IOException {
         byte[] buffer = new byte[len];
         is.read(buffer);
-        return new String(buffer).split("\0")[0];
+        String[] str = new String(buffer).split("\0");
+        return str.length > 0 ? str[0].trim() : null;
     }
 
     protected Date readFloatDate() throws IOException {
@@ -159,6 +160,13 @@ public abstract class MetaStockElement {
         return ByteBuffer.allocate(4)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putFloat(value)
+                .array();
+    }
+
+    protected byte[] getIntArray(int value) {
+        return ByteBuffer.allocate(4)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putInt(value)
                 .array();
     }
 

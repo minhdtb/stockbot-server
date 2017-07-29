@@ -20,8 +20,8 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
     private Date startDate;
     private Date endDate;
 
-    public MetaStockEMasterRecord(int fileNumber, int totalFields, String symbol, String description,
-                                  String period, Date startDate, Date endDate) {
+    public MetaStockEMasterRecord(String symbol, String description, String period, int fileNumber,
+                                  int totalFields, Date startDate, Date endDate) {
         this.fileNumber = fileNumber;
         this.totalFields = totalFields;
         this.symbol = symbol;

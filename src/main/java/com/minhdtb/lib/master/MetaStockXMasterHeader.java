@@ -28,9 +28,13 @@ final class MetaStockXMasterHeader extends MetaStockElement implements MetaStock
 
     @Override
     protected int encode(byte[] buffer) {
-        int len = 10;
+        int len = 0;
 
-        byte[] tmpBuffer = getShortArray((short) totalFiles);
+        byte[] tmpBuffer = new byte[]{0x5D, (byte) 0xFE, 0x58, 0x4D, (byte) 0x8B, 0x02,
+                0x59, (byte) 0xB2, (byte) 0xC1, (byte) 0x8F}; // magic header
+        len += copyBuffer(tmpBuffer, buffer, len);
+
+        tmpBuffer = getShortArray((short) totalFiles);
         len += copyBuffer(tmpBuffer, buffer, len);
         len += 2;
 

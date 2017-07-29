@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-final class MetaStockEMasterHeader extends MetaStockElement implements MetaStockHeader {
+public final class MetaStockEMasterHeader extends MetaStockElement implements MetaStockHeader {
 
     private int totalFiles;
     private int lastFileNumber;
@@ -48,6 +48,6 @@ final class MetaStockEMasterHeader extends MetaStockElement implements MetaStock
 
     @Override
     public int count() {
-        return getTotalFiles() + 1;
+        return getTotalFiles();
     }
 }

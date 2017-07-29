@@ -1,15 +1,33 @@
 package com.minhdtb.lib.base;
 
 import com.google.common.io.LittleEndianDataOutputStream;
+import com.minhdtb.lib.data.MetaStockDataRecord;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MetaStock<T> {
+public abstract class MetaStock<T extends MetaStockElement> {
     private List<T> records = new ArrayList<>();
 
-    protected final int BUFFER_SIZE = 1024;
+    protected abstract void save(String filename) throws IOException;
+
+    protected void write(MetaStockElement header, LittleEndianDataOutputStream os) throws IOException {
+        byte[] buffer;
+        int len;
+
+        int BUFFER_SIZE = 1024;
+        
+        buffer = new byte[BUFFER_SIZE];
+        len = header.encode(buffer);
+        os.write(buffer, 0, len);
+
+        for (T record : getRecords()) {
+            buffer = new byte[BUFFER_SIZE];
+            len = record.encode(buffer);
+            os.write(buffer, 0, len);
+        }
+    }
 
     public void append(T record) {
         records.add(record);
@@ -23,5 +41,4 @@ public abstract class MetaStock<T> {
         return records;
     }
 
-    protected abstract void save(LittleEndianDataOutputStream os) throws IOException;
 }
