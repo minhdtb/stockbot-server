@@ -1,8 +1,11 @@
 import com.google.common.io.LittleEndianDataInputStream;
+import com.google.common.io.LittleEndianDataOutputStream;
 import com.minhdtb.lib.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Date;
 
 public class MainApp {
 
@@ -24,6 +27,19 @@ public class MainApp {
             System.out.println(xMaster.getHeader());
             MetaStockXMasterRecord xMasterRecord = xMaster.getRecords().get(xMaster.getRecords().size() - 1);
             System.out.println(xMasterRecord);
+            //===============================================
+            MetaStockEMaster eMaster1 = new MetaStockEMaster();
+            MetaStockEMasterRecord eMasterRecord1 = new MetaStockEMasterRecord(1, 7, "AAA",
+                    "AAA", "D", new Date(), new Date());
+            eMaster1.getRecords().add(eMasterRecord1);
+
+            eMaster1.save(new LittleEndianDataOutputStream(new FileOutputStream("E:\\test2\\EMASTER")));
+
+            MetaStockData data1 = new MetaStockData();
+            MetaStockDataRecord dataRecord = new MetaStockDataRecord(new Date(), 10, 10, 10, 10, 10, 10);
+            data1.getRecords().add(dataRecord);
+            data1.save(new LittleEndianDataOutputStream(new FileOutputStream("E:\\test2\\F1.DAT")));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

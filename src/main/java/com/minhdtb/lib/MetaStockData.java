@@ -42,12 +42,12 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
         if (os == null)
             return;
 
-        buffer = new byte[255];
+        buffer = new byte[BUFFER_SIZE];
         len = header.encode(buffer);
         os.write(buffer, 0, len);
 
         for (MetaStockDataRecord record : getRecords()) {
-            buffer = new byte[255];
+            buffer = new byte[BUFFER_SIZE];
             len = record.encode(buffer);
             os.write(buffer, 0, len);
         }

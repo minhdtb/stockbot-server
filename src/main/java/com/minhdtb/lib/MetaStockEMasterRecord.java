@@ -11,11 +11,11 @@ import java.util.Date;
 @Data
 public final class MetaStockEMasterRecord extends MetaStockElement {
 
-    private int fileNumber;
-    private int totalFields;
     private String symbol;
     private String description;
     private String period;
+    private int fileNumber;
+    private int totalFields;
     private Date startDate;
     private Date endDate;
 
@@ -36,18 +36,48 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
 
     @Override
     int encode(byte[] buffer) {
-        int len = 2;
+        int len = 0;
 
-        byte[] tmpBuffer = getByteArray((byte) fileNumber);
+        byte[] tmpBuffer = {0x36, 0x36}; // Asc symbol
+        len += copyBuffer(tmpBuffer, buffer, len);
+
+        tmpBuffer = getByteArray((byte) fileNumber);
         len += copyBuffer(tmpBuffer, buffer, len);
         len += 3;
 
         tmpBuffer = getByteArray((byte) totalFields);
         len += copyBuffer(tmpBuffer, buffer, len);
-        len += 4;
 
+        tmpBuffer = new byte[]{0x7f}; // Delete symbol
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 1;
+
+        tmpBuffer = new byte[]{0x20}; // Space symbol
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 1;
+
+        symbol = symbol.length() > 14 ? symbol.substring(0, 14) : symbol;
         tmpBuffer = getStringArray(symbol);
         len += copyBuffer(tmpBuffer, buffer, len);
+        len += (14 - symbol.length()) + 7;
+
+        description = description.length() > 16 ? description.substring(0, 16) : description;
+        tmpBuffer = getStringArray(description);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += (16 - description.length()) + 12;
+
+        period = period.length() > 1 ? period.substring(0, 1) : period;
+        tmpBuffer = getStringArray(period);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += (1 - period.length()) + 3;
+
+        tmpBuffer = getFloatArray(DateToInt(startDate, true));
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 4;
+
+        tmpBuffer = getFloatArray(DateToInt(endDate, true));
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 116;
 
         return len;
     }

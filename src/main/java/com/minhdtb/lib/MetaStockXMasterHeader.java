@@ -8,13 +8,13 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockXMasterHeader extends MetaStockElement {
+final class MetaStockXMasterHeader extends MetaStockElement {
 
     private int totalFiles;
     private int totalFilesExtend;
     private int lastFileNumber;
 
-    public MetaStockXMasterHeader(int totalFiles, int totalFilesExtend, int lastFileNumber) {
+    MetaStockXMasterHeader(int totalFiles, int totalFilesExtend, int lastFileNumber) {
         this.totalFiles = totalFiles;
         this.totalFilesExtend = totalFilesExtend;
         this.lastFileNumber = lastFileNumber;
@@ -26,7 +26,21 @@ public final class MetaStockXMasterHeader extends MetaStockElement {
 
     @Override
     int encode(byte[] buffer) {
-        return 0;
+        int len = 10;
+
+        byte[] tmpBuffer = getShortArray((short) totalFiles);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 2;
+
+        tmpBuffer = getShortArray((short) totalFilesExtend);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 2;
+
+        tmpBuffer = getShortArray((short) lastFileNumber);
+        len += copyBuffer(tmpBuffer, buffer, len);
+        len += 130;
+
+        return len;
     }
 
     @Override

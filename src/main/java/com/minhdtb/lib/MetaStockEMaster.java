@@ -41,12 +41,12 @@ public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
         if (os == null)
             return;
 
-        buffer = new byte[255];
+        buffer = new byte[BUFFER_SIZE];
         len = header.encode(buffer);
         os.write(buffer, 0, len);
 
         for (MetaStockEMasterRecord record : getRecords()) {
-            buffer = new byte[255];
+            buffer = new byte[BUFFER_SIZE];
             len = record.encode(buffer);
             os.write(buffer, 0, len);
         }
