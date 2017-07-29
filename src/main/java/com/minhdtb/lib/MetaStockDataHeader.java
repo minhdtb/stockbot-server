@@ -10,12 +10,12 @@ import java.nio.ByteOrder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockDataHeader extends MetaStockElement {
+final class MetaStockDataHeader extends MetaStockElement {
 
     private int totalRecords;
     private int lastRecord;
 
-    public MetaStockDataHeader(short totalRecords, short lastRecord) {
+    MetaStockDataHeader(short totalRecords, short lastRecord) {
         this.totalRecords = totalRecords;
         this.lastRecord = lastRecord;
     }

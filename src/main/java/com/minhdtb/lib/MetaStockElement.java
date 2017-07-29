@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 abstract class MetaStockElement {
 

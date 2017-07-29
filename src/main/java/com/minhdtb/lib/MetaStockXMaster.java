@@ -1,19 +1,17 @@
 package com.minhdtb.lib;
 
-
 import com.google.common.io.LittleEndianDataInputStream;
+import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockXMaster {
+public final class MetaStockXMaster extends MetaStock<MetaStockXMasterRecord> {
 
     private MetaStockXMasterHeader header;
-    private List<MetaStockXMasterRecord> records = new ArrayList<>();
 
     public MetaStockXMaster() {
 
@@ -24,10 +22,15 @@ public final class MetaStockXMaster {
             header = new MetaStockXMasterHeader(is);
             for (int i = 0; i < header.getTotalFiles(); i++) {
                 MetaStockXMasterRecord data = new MetaStockXMasterRecord(is);
-                records.add(data);
+                getRecords().add(data);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    void save(LittleEndianDataOutputStream os) throws IOException {
+
     }
 }

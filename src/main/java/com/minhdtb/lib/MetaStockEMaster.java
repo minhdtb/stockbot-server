@@ -3,16 +3,15 @@ package com.minhdtb.lib;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockEMaster {
+public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
 
     private MetaStockEMasterHeader header;
-    private List<MetaStockEMasterRecord> records = new ArrayList<>();
 
     public MetaStockEMaster() {
 
@@ -23,19 +22,20 @@ public final class MetaStockEMaster {
             header = new MetaStockEMasterHeader(is);
             for (int i = 0; i < header.getTotalFiles(); i++) {
                 MetaStockEMasterRecord data = new MetaStockEMasterRecord(is);
-                records.add(data);
+                getRecords().add(data);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
     public void save(LittleEndianDataOutputStream os) throws IOException {
         byte[] buffer;
         int len;
 
         if (header == null) {
-            header = new MetaStockEMasterHeader((short) records.size(), (short) records.size());
+            header = new MetaStockEMasterHeader((short) getRecords().size(), (short) getRecords().size());
         }
 
         if (os == null)
@@ -45,18 +45,10 @@ public final class MetaStockEMaster {
         len = header.encode(buffer);
         os.write(buffer, 0, len);
 
-        for (MetaStockEMasterRecord record : records) {
+        for (MetaStockEMasterRecord record : getRecords()) {
             buffer = new byte[255];
             len = record.encode(buffer);
             os.write(buffer, 0, len);
         }
-    }
-
-    public void append(MetaStockEMasterRecord record) {
-        records.add(record);
-    }
-
-    public void remove(int index) {
-        records.remove(index);
     }
 }

@@ -24,7 +24,7 @@ public class MainApp {
             System.out.println(xMaster.getHeader());
             MetaStockXMasterRecord xMasterRecord = xMaster.getRecords().get(xMaster.getRecords().size() - 1);
             System.out.println(xMasterRecord);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

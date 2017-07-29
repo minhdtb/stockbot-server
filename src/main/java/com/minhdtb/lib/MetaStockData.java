@@ -4,17 +4,15 @@ package com.minhdtb.lib;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockData {
+public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
 
-    private LittleEndianDataOutputStream os;
     private MetaStockDataHeader header;
-    private List<MetaStockDataRecord> records = new ArrayList<>();
 
     public MetaStockData() {
 
@@ -23,21 +21,22 @@ public final class MetaStockData {
     public MetaStockData(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockDataHeader(is);
-            for (int i = 0; i < header.getLastRecord(); i++) {
+            for (int i = 0; i < header.getLastRecord() - 1; i++) {
                 MetaStockDataRecord data = new MetaStockDataRecord(is);
-                records.add(data);
+                getRecords().add(data);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
     public void save(LittleEndianDataOutputStream os) throws IOException {
         byte[] buffer;
         int len;
 
         if (header == null) {
-            header = new MetaStockDataHeader((short) records.size(), (short) records.size());
+            header = new MetaStockDataHeader((short) getRecords().size(), (short) getRecords().size());
         }
 
         if (os == null)
@@ -47,18 +46,10 @@ public final class MetaStockData {
         len = header.encode(buffer);
         os.write(buffer, 0, len);
 
-        for (MetaStockDataRecord record : records) {
+        for (MetaStockDataRecord record : getRecords()) {
             buffer = new byte[255];
             len = record.encode(buffer);
             os.write(buffer, 0, len);
         }
-    }
-
-    public void append(MetaStockDataRecord record) {
-        records.add(record);
-    }
-
-    public void remove(int index) {
-        records.remove(index);
     }
 }
