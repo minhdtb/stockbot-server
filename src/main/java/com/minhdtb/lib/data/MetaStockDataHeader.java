@@ -1,12 +1,11 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.data;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -25,7 +24,7 @@ final class MetaStockDataHeader extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer) {
+    protected int encode(byte[] buffer) {
         int len = 0;
 
         byte[] tmpBuffer = getShortArray((short) totalRecords);
@@ -40,9 +39,11 @@ final class MetaStockDataHeader extends MetaStockElement {
     }
 
     @Override
-    void parse() throws IOException {
+    protected void parse() throws IOException {
         totalRecords = readUnsignedShort();
         lastRecord = readUnsignedShort();
         Skip(24);
     }
+
+
 }

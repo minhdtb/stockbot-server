@@ -1,6 +1,7 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,12 +26,12 @@ public final class MetaStockXMasterRecord extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer) {
+    protected int encode(byte[] buffer) {
         return 0;
     }
 
     @Override
-    void parse() throws IOException {
+    protected void parse() throws IOException {
         Skip(1);
         symbol = readString(15);
         description = readString(46);

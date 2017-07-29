@@ -1,7 +1,8 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
+import com.minhdtb.lib.base.MetaStock;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,7 +31,7 @@ public final class MetaStockXMaster extends MetaStock<MetaStockXMasterRecord> {
     }
 
     @Override
-    void save(LittleEndianDataOutputStream os) throws IOException {
+    public void save(LittleEndianDataOutputStream os) throws IOException {
 
     }
 }

@@ -1,6 +1,7 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -35,7 +36,7 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer) {
+    protected int encode(byte[] buffer) {
         int len = 0;
 
         byte[] tmpBuffer = {0x36, 0x36}; // Asc symbol
@@ -83,7 +84,7 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
     }
 
     @Override
-    void parse() throws IOException {
+    protected void parse() throws IOException {
         Skip(2);
         fileNumber = readUnsignedByte();
         Skip(3);

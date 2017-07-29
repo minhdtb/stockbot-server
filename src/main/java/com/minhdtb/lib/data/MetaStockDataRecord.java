@@ -1,12 +1,11 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.data;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -36,7 +35,7 @@ public final class MetaStockDataRecord extends MetaStockElement {
     }
 
     @Override
-    int encode(byte[] buffer) {
+    protected int encode(byte[] buffer) {
         int len = 0;
 
         byte[] tmpBuffer = getFloatArray(FloatToMBF(DateToInt(date, true)));
@@ -64,7 +63,7 @@ public final class MetaStockDataRecord extends MetaStockElement {
     }
 
     @Override
-    void parse() throws IOException {
+    protected void parse() throws IOException {
         date = readMBFDate();
         open = readMBFFloat();
         high = readMBFFloat();

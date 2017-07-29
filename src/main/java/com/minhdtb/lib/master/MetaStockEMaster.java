@@ -1,8 +1,8 @@
-package com.minhdtb.lib;
-
+package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
+import com.minhdtb.lib.base.MetaStock;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,19 +10,19 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
+public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
 
-    private MetaStockDataHeader header;
+    private MetaStockEMasterHeader header;
 
-    public MetaStockData() {
+    public MetaStockEMaster() {
 
     }
 
-    public MetaStockData(LittleEndianDataInputStream is) {
+    public MetaStockEMaster(LittleEndianDataInputStream is) {
         try {
-            header = new MetaStockDataHeader(is);
-            for (int i = 0; i < header.getLastRecord() - 1; i++) {
-                MetaStockDataRecord data = new MetaStockDataRecord(is);
+            header = new MetaStockEMasterHeader(is);
+            for (int i = 0; i < header.getTotalFiles(); i++) {
+                MetaStockEMasterRecord data = new MetaStockEMasterRecord(is);
                 getRecords().add(data);
             }
         } catch (IOException e) {
@@ -36,7 +36,7 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
         int len;
 
         if (header == null) {
-            header = new MetaStockDataHeader((short) getRecords().size(), (short) getRecords().size());
+            header = new MetaStockEMasterHeader((short) getRecords().size(), (short) getRecords().size());
         }
 
         if (os == null)
@@ -46,7 +46,7 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
         len = header.encode(buffer);
         os.write(buffer, 0, len);
 
-        for (MetaStockDataRecord record : getRecords()) {
+        for (MetaStockEMasterRecord record : getRecords()) {
             buffer = new byte[BUFFER_SIZE];
             len = record.encode(buffer);
             os.write(buffer, 0, len);

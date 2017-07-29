@@ -1,4 +1,4 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.base;
 
 import com.google.common.io.LittleEndianDataInputStream;
 
@@ -8,19 +8,19 @@ import java.nio.ByteOrder;
 import java.util.Calendar;
 import java.util.Date;
 
-abstract class MetaStockElement {
+public abstract class MetaStockElement {
 
-    abstract int encode(byte[] buffer);
+    protected abstract int encode(byte[] buffer);
 
-    abstract void parse() throws IOException;
+    protected abstract void parse() throws IOException;
 
     private LittleEndianDataInputStream is;
 
-    MetaStockElement() {
+    protected MetaStockElement() {
 
     }
 
-    MetaStockElement(LittleEndianDataInputStream is) throws IOException {
+    protected MetaStockElement(LittleEndianDataInputStream is) throws IOException {
         this.is = is;
         this.parse();
     }
@@ -70,7 +70,7 @@ abstract class MetaStockElement {
         return ByteBuffer.wrap(ieee).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
-    float FloatToMBF(float value) {
+    protected float FloatToMBF(float value) {
         byte[] ieee = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
         byte[] msbin = new byte[4];
         int msbinExp = 0x00;
@@ -95,41 +95,41 @@ abstract class MetaStockElement {
         return ByteBuffer.wrap(msbin).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
-    void Skip(int len) throws IOException {
+    protected void Skip(int len) throws IOException {
         is.skip(len);
     }
 
-    String readString(int len) throws IOException {
+    protected String readString(int len) throws IOException {
         byte[] buffer = new byte[len];
         is.read(buffer);
         return new String(buffer).split("\0")[0];
     }
 
-    Date readFloatDate() throws IOException {
+    protected Date readFloatDate() throws IOException {
         return IntToDate((int) is.readFloat(), true);
     }
 
-    Date readIntDate() throws IOException {
+    protected Date readIntDate() throws IOException {
         return IntToDate(is.readInt(), false);
     }
 
-    Date readMBFDate() throws IOException {
+    protected Date readMBFDate() throws IOException {
         return IntToDate((int) readMBFFloat(), true);
     }
 
-    int readUnsignedByte() throws IOException {
+    protected int readUnsignedByte() throws IOException {
         return is.readUnsignedByte();
     }
 
-    int readUnsignedShort() throws IOException {
+    protected int readUnsignedShort() throws IOException {
         return is.readUnsignedShort();
     }
 
-    float readMBFFloat() throws IOException {
+    protected float readMBFFloat() throws IOException {
         return MBFToFloat(is.readFloat());
     }
 
-    int DateToInt(Date date, boolean flag) {
+    protected int DateToInt(Date date, boolean flag) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
@@ -144,29 +144,29 @@ abstract class MetaStockElement {
         return ret;
     }
 
-    byte[] getShortArray(short value) {
+    protected byte[] getShortArray(short value) {
         return ByteBuffer.allocate(2)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putShort(value)
                 .array();
     }
 
-    byte[] getByteArray(byte value) {
+    protected byte[] getByteArray(byte value) {
         return new byte[]{value};
     }
 
-    byte[] getFloatArray(float value) {
+    protected byte[] getFloatArray(float value) {
         return ByteBuffer.allocate(4)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putFloat(value)
                 .array();
     }
 
-    byte[] getStringArray(String value) {
+    protected byte[] getStringArray(String value) {
         return value.getBytes();
     }
 
-    int copyBuffer(byte[] src, byte[] dst, int pos) {
+    protected int copyBuffer(byte[] src, byte[] dst, int pos) {
         System.arraycopy(src, 0, dst, pos, src.length);
         return src.length;
     }
