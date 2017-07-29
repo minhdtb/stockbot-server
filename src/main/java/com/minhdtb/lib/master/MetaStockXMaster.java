@@ -21,7 +21,7 @@ public final class MetaStockXMaster extends MetaStock<MetaStockXMasterRecord> {
     public MetaStockXMaster(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockXMasterHeader(is);
-            for (int i = 0; i < header.getTotalFiles(); i++) {
+            for (int i = 0; i < header.count() - 1; i++) {
                 MetaStockXMasterRecord data = new MetaStockXMasterRecord(is);
                 getRecords().add(data);
             }

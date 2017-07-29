@@ -21,7 +21,7 @@ public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
     public MetaStockEMaster(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockEMasterHeader(is);
-            for (int i = 0; i < header.getTotalFiles(); i++) {
+            for (int i = 0; i < header.count() - 1; i++) {
                 MetaStockEMasterRecord data = new MetaStockEMasterRecord(is);
                 getRecords().add(data);
             }

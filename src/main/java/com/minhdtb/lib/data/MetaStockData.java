@@ -22,7 +22,7 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
     public MetaStockData(LittleEndianDataInputStream is) {
         try {
             header = new MetaStockDataHeader(is);
-            for (int i = 0; i < header.getLastRecord() - 1; i++) {
+            for (int i = 0; i < header.count() - 1; i++) {
                 MetaStockDataRecord data = new MetaStockDataRecord(is);
                 getRecords().add(data);
             }

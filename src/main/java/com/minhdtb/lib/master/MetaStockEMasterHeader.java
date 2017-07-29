@@ -2,6 +2,7 @@ package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.minhdtb.lib.base.MetaStockElement;
+import com.minhdtb.lib.base.MetaStockHeader;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-final class MetaStockEMasterHeader extends MetaStockElement {
+final class MetaStockEMasterHeader extends MetaStockElement implements MetaStockHeader {
 
     private int totalFiles;
     private int lastFileNumber;
@@ -43,5 +44,10 @@ final class MetaStockEMasterHeader extends MetaStockElement {
         totalFiles = readUnsignedShort();
         lastFileNumber = readUnsignedShort();
         Skip(188);
+    }
+
+    @Override
+    public int count() {
+        return getTotalFiles() + 1;
     }
 }
