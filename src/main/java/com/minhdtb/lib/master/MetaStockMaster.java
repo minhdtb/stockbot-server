@@ -6,6 +6,7 @@ import com.minhdtb.lib.base.MetaStock;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,9 +21,9 @@ public class MetaStockMaster extends MetaStock<MetaStockMasterRecord> {
 
     }
 
-    public MetaStockMaster(String filename) {
+    public MetaStockMaster(File file) {
         try {
-            LittleEndianDataInputStream is = new LittleEndianDataInputStream(new FileInputStream(filename));
+            LittleEndianDataInputStream is = new LittleEndianDataInputStream(new FileInputStream(file));
             header = new MetaStockMasterHeader(is);
             for (int i = 0; i < header.count(); i++) {
                 MetaStockMasterRecord data = new MetaStockMasterRecord(is);
@@ -34,11 +35,8 @@ public class MetaStockMaster extends MetaStock<MetaStockMasterRecord> {
     }
 
     @Override
-    public void save(String filename) throws IOException {
-        if (header == null) {
-            header = new MetaStockMasterHeader((short) getRecords().size(), (short) getRecords().size());
-        }
-
-        write(header, new LittleEndianDataOutputStream(new FileOutputStream(filename)));
+    public void save(File file) throws IOException {
+        header = new MetaStockMasterHeader((short) getRecords().size(), (short) getRecords().size());
+        write(header, new LittleEndianDataOutputStream(new FileOutputStream(file)));
     }
 }
