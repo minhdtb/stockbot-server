@@ -49,6 +49,6 @@ final class MetaStockDataHeader extends MetaStockElement implements MetaStockHea
 
     @Override
     public int count() {
-        return getLastRecord();
+        return getLastRecord() - 1;
     }
 }

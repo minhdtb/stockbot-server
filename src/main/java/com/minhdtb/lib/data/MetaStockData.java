@@ -26,7 +26,7 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
         try {
             LittleEndianDataInputStream is = new LittleEndianDataInputStream(new FileInputStream(file));
             header = new MetaStockDataHeader(is);
-            for (int i = 0; i < header.count() - 1; i++) {
+            for (int i = 0; i < header.count(); i++) {
                 MetaStockDataRecord data = new MetaStockDataRecord(is);
                 getRecords().add(data);
             }
@@ -37,7 +37,7 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
 
     @Override
     public void save(File file) throws IOException {
-        header = new MetaStockDataHeader((short) getRecords().size(), (short) getRecords().size());
+        header = new MetaStockDataHeader((short) getRecords().size(), (short) (getRecords().size() + 1));
         write(header, new LittleEndianDataOutputStream(new FileOutputStream(file)));
     }
 }
