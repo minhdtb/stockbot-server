@@ -53,7 +53,7 @@ public class TestApp {
                     "e", 7, null, new Date(), new Date());
 
             master1.getRecords().add(record2);
-            MetaStockMasterRecord record3 = new MetaStockMasterRecord("XXXYYY", "XXXYYY", "D", 1,
+            MetaStockMasterRecord record3 = new MetaStockMasterRecord("XXXYYY", "XXXYYY", "D", 2,
                     "e", 7, null, new Date(), new Date());
 
             master1.getRecords().add(record3);
@@ -70,6 +70,18 @@ public class TestApp {
             MetaStockDataRecord dataRecord = new MetaStockDataRecord(new Date(), 10, 10, 10, 10, 10, 10);
             data1.getRecords().add(dataRecord);
             data1.save(new File("E:\\test2\\F1.DAT"));
+
+            //============================================================
+
+
+            MetaStockMaster master2 = new MetaStockMaster(new File("E:\\test2\\MASTER"));
+            System.out.println(master2.getHeader());
+            System.out.println(master2.getRecords().get(0));
+
+            MetaStockXMaster xMaster2 = new MetaStockXMaster(new File("E:\\test2\\XMASTER"));
+            System.out.println(xMaster2.getHeader());
+            System.out.println(xMaster2.getRecords().get(0));
+
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.annotations.DataField;
 import com.minhdtb.lib.base.MetaStockElement;
 import com.minhdtb.lib.base.MetaStockHeader;
 import lombok.Data;
@@ -12,8 +13,14 @@ import java.io.IOException;
 @Data
 public final class MetaStockEMasterHeader extends MetaStockElement implements MetaStockHeader {
 
+    @DataField(length = 2)
     private int totalFiles;
+
+    @DataField(length = 2)
     private int lastFileNumber;
+
+    @DataField(length = 188)
+    private byte[] spare;
 
     MetaStockEMasterHeader(int totalFiles, int lastFileNumber) {
         this.totalFiles = totalFiles;
@@ -22,28 +29,6 @@ public final class MetaStockEMasterHeader extends MetaStockElement implements Me
 
     MetaStockEMasterHeader(LittleEndianDataInputStream is) throws IOException {
         super(is);
-    }
-
-    @Override
-    protected int encode(byte[] buffer) {
-        int len = 0;
-
-        byte[] tmpBuffer = getShortArray((short) totalFiles);
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getShortArray((short) lastFileNumber);
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        len += 188;
-
-        return len;
-    }
-
-    @Override
-    protected void parse() throws IOException {
-        totalFiles = readUnsignedShort();
-        lastFileNumber = readUnsignedShort();
-        Skip(188);
     }
 
     @Override

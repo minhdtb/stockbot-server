@@ -1,6 +1,8 @@
 package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.annotations.DataField;
+import com.minhdtb.lib.annotations.DataType;
 import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,16 +14,50 @@ import java.util.Date;
 @Data
 public class MetaStockMasterRecord extends MetaStockElement {
 
-    private String symbol;
-    private String description;
-    private String period;
+    @DataField(length = 1)
     private int fileNumber;
+
+    @DataField(length = 2)
     private String fileType;
+
+    @DataField(length = 1)
+    private byte[] spare;
+
+    @DataField(length = 1)
     private int recordLength;
+
+    @DataField(length = 1)
     private int numberOfFields;
+
+    @DataField(length = 1)
+    private byte[] spare1;
+
+    @DataField(length = 16)
+    private String description;
+
+    @DataField(length = 1)
+    private byte[] spare2;
+
+    @DataField(length = 1)
     private String version;
+
+    @DataField(type = DataType.MBF)
     private Date startDate;
+
+    @DataField(type = DataType.MBF)
     private Date endDate;
+
+    @DataField(length = 1)
+    private String period;
+
+    @DataField(length = 2)
+    private byte[] spare3;
+
+    @DataField(length = 14)
+    private String symbol;
+
+    @DataField(length = 3)
+    private byte[] spare4;
 
     public MetaStockMasterRecord(String symbol, String description, String period, int fileNumber, String fileType,
                                  int numberOfFields, String version, Date startDate, Date endDate) {
@@ -39,70 +75,5 @@ public class MetaStockMasterRecord extends MetaStockElement {
 
     MetaStockMasterRecord(LittleEndianDataInputStream is) throws IOException {
         super(is);
-    }
-
-    @Override
-    protected int encode(byte[] buffer) {
-        int len = 0;
-
-        byte[] tmpBuffer = getByteArray((byte) fileNumber);
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        fileType = fileType.length() > 2 ? fileType.substring(0, 2) : fileType;
-        tmpBuffer = getStringArray(fileType);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (2 - fileType.length());
-
-        tmpBuffer = getByteArray((byte) recordLength);
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getByteArray((byte) numberOfFields);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 2;
-
-        description = description.length() > 16 ? description.substring(0, 16) : description;
-        tmpBuffer = getStringArray(description);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (16 - description.length()) + 1;
-
-        tmpBuffer = new byte[]{0x00}; // Version = null
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(DateToInt(startDate, true)));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(DateToInt(endDate, true)));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        period = period.length() > 1 ? period.substring(0, 1) : period;
-        tmpBuffer = getStringArray(period);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (1 - period.length()) + 2;
-
-        symbol = symbol.length() > 14 ? symbol.substring(0, 14) : symbol;
-        tmpBuffer = getStringArray(symbol);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (14 - symbol.length()) + 3;
-
-        return len;
-    }
-
-    @Override
-    protected void parse() throws IOException {
-        fileNumber = readUnsignedByte();
-        fileType = readString(2);
-        Skip(1);
-        numberOfFields = readUnsignedByte();
-        recordLength = numberOfFields * 4;
-        Skip(2);
-        description = readString(16);
-        Skip(1);
-        version = readString(1);
-        startDate = readMBFDate();
-        endDate = readMBFDate();
-        period = readString(1);
-        Skip(2);
-        symbol = readString(14);
-        Skip(3);
     }
 }

@@ -1,18 +1,19 @@
 package com.minhdtb.lib.base;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.google.common.io.LittleEndianDataOutputStream;
+import com.minhdtb.lib.annotations.DataField;
+import com.minhdtb.lib.annotations.DataType;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.Date;
 
 public abstract class MetaStockElement {
-
-    protected abstract int encode(byte[] buffer);
-
-    protected abstract void parse() throws IOException;
 
     private LittleEndianDataInputStream is;
 
@@ -20,9 +21,89 @@ public abstract class MetaStockElement {
 
     }
 
+    void write(LittleEndianDataOutputStream os) {
+        Class<? extends MetaStockElement> clazz = this.getClass();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(DataField.class)) {
+                DataField dataField = field.getAnnotation(DataField.class);
+                try {
+                    field.setAccessible(true);
+
+                    if (field.getName().toLowerCase().contains("spare")) {
+                        os.write(new byte[dataField.length()]);
+                    } else if (field.getType() == byte[].class) {
+                        byte[] value = (byte[]) field.get(this);
+                        value = value != null ? value : new byte[dataField.length()];
+                        os.write(value);
+                    } else if (field.getType() == int.class && dataField.length() == 2) {
+                        int value = (int) field.get(this);
+                        os.write(getShortArray((short) value));
+                    } else if (field.getType() == int.class && dataField.length() == 1) {
+                        int value = (int) field.get(this);
+                        os.write(getByteArray((byte) value));
+                    } else if (field.getType() == float.class && dataField.length() == 4) {
+                        os.write(getFloatArray(FloatToMBF((float) field.get(this))));
+                    } else if (field.getType() == String.class) {
+                        os.write(getStringArray((String) field.get(this), dataField.length()));
+                    } else if (field.getType() == Date.class) {
+                        if (dataField.type() == DataType.MBF) {
+                            os.write(getFloatArray(FloatToMBF(DateToInt((Date) field.get(this), true))));
+                        } else if (dataField.type() == DataType.FLOAT) {
+                            os.write(getFloatArray(DateToInt((Date) field.get(this), true)));
+                        } else {
+                            os.write(getIntArray(DateToInt((Date) field.get(this), false)));
+                        }
+                    }
+                } catch (IOException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void read() {
+        Class<? extends MetaStockElement> clazz = this.getClass();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(DataField.class)) {
+                DataField dataField = field.getAnnotation(DataField.class);
+                try {
+                    field.setAccessible(true);
+
+                    if (field.getName().toLowerCase().contains("spare")) {
+                        Skip(dataField.length());
+                    } else if (field.getType() == byte[].class) {
+                        field.set(this, readByteArray(dataField.length()));
+                    } else if (field.getType() == int.class && dataField.length() == 2) {
+                        field.set(this, readUnsignedShort());
+                    } else if (field.getType() == int.class && dataField.length() == 1) {
+                        field.set(this, readUnsignedByte());
+                    } else if (field.getType() == float.class && dataField.length() == 4) {
+                        field.set(this, readMBFFloat());
+                    } else if (field.getType() == String.class) {
+                        field.set(this, readString(dataField.length()));
+                    } else if (field.getType() == Date.class) {
+                        if (dataField.type() == DataType.MBF) {
+                            field.set(this, readMBFDate());
+                        } else if (dataField.type() == DataType.FLOAT) {
+                            field.set(this, readFloatDate());
+                        } else {
+                            field.set(this, readIntDate());
+                        }
+                    } else {
+                        throw new InvalidParameterException("Invalid data field structure.");
+                    }
+                } catch (IllegalAccessException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     protected MetaStockElement(LittleEndianDataInputStream is) throws IOException {
         this.is = is;
-        this.parse();
+        this.read();
     }
 
     private Date getDate(int y, int m, int d) {
@@ -70,7 +151,7 @@ public abstract class MetaStockElement {
         return ByteBuffer.wrap(ieee).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
-    protected float FloatToMBF(float value) {
+    private float FloatToMBF(float value) {
         byte[] ieee = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
         byte[] msbin = new byte[4];
         int msbinExp = 0x00;
@@ -95,42 +176,48 @@ public abstract class MetaStockElement {
         return ByteBuffer.wrap(msbin).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
 
-    protected void Skip(int len) throws IOException {
+    private void Skip(int len) throws IOException {
         is.skip(len);
     }
 
-    protected String readString(int len) throws IOException {
+    private byte[] readByteArray(int len) throws IOException {
+        byte[] buffer = new byte[len];
+        is.read(buffer);
+        return buffer;
+    }
+
+    private String readString(int len) throws IOException {
         byte[] buffer = new byte[len];
         is.read(buffer);
         String[] str = new String(buffer).split("\0");
         return str.length > 0 ? str[0].trim() : null;
     }
 
-    protected Date readFloatDate() throws IOException {
+    private Date readFloatDate() throws IOException {
         return IntToDate((int) is.readFloat(), true);
     }
 
-    protected Date readIntDate() throws IOException {
+    private Date readIntDate() throws IOException {
         return IntToDate(is.readInt(), false);
     }
 
-    protected Date readMBFDate() throws IOException {
+    private Date readMBFDate() throws IOException {
         return IntToDate((int) readMBFFloat(), true);
     }
 
-    protected int readUnsignedByte() throws IOException {
+    private int readUnsignedByte() throws IOException {
         return is.readUnsignedByte();
     }
 
-    protected int readUnsignedShort() throws IOException {
+    private int readUnsignedShort() throws IOException {
         return is.readUnsignedShort();
     }
 
-    protected float readMBFFloat() throws IOException {
+    private float readMBFFloat() throws IOException {
         return MBFToFloat(is.readFloat());
     }
 
-    protected int DateToInt(Date date, boolean flag) {
+    private int DateToInt(Date date, boolean flag) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
@@ -145,37 +232,38 @@ public abstract class MetaStockElement {
         return ret;
     }
 
-    protected byte[] getShortArray(short value) {
+    private byte[] getShortArray(short value) {
         return ByteBuffer.allocate(2)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putShort(value)
                 .array();
     }
 
-    protected byte[] getByteArray(byte value) {
+    private byte[] getByteArray(byte value) {
         return new byte[]{value};
     }
 
-    protected byte[] getFloatArray(float value) {
+    private byte[] getFloatArray(float value) {
         return ByteBuffer.allocate(4)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putFloat(value)
                 .array();
     }
 
-    protected byte[] getIntArray(int value) {
+    private byte[] getIntArray(int value) {
         return ByteBuffer.allocate(4)
                 .order(ByteOrder.LITTLE_ENDIAN)
                 .putInt(value)
                 .array();
     }
 
-    protected byte[] getStringArray(String value) {
-        return value.getBytes();
-    }
+    private byte[] getStringArray(String value, int length) {
+        byte[] buffer = new byte[length];
+        if (value != null) {
+            value = value.length() > length ? value.substring(0, length - 1) : value;
+            System.arraycopy(value.getBytes(), 0, buffer, 0, value.length());
+        }
 
-    protected int copyBuffer(byte[] src, byte[] dst, int pos) {
-        System.arraycopy(src, 0, dst, pos, src.length);
-        return src.length;
+        return buffer;
     }
 }

@@ -1,6 +1,8 @@
 package com.minhdtb.lib.data;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.annotations.DataField;
+import com.minhdtb.lib.annotations.DataType;
 import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,12 +14,25 @@ import java.util.Date;
 @Data
 public final class MetaStockDataRecord extends MetaStockElement {
 
+    @DataField(type = DataType.MBF)
     private Date date;
+
+    @DataField(length = 4)
     private float open;
+
+    @DataField(length = 4)
     private float high;
+
+    @DataField(length = 4)
     private float low;
+
+    @DataField(length = 4)
     private float close;
+
+    @DataField(length = 4)
     private float volume;
+
+    @DataField(length = 4)
     private float openInterest;
 
     public MetaStockDataRecord(Date date, float open, float high, float low, float close, float volume, float openInterest) {
@@ -32,44 +47,5 @@ public final class MetaStockDataRecord extends MetaStockElement {
 
     MetaStockDataRecord(LittleEndianDataInputStream is) throws IOException {
         super(is);
-    }
-
-    @Override
-    protected int encode(byte[] buffer) {
-        int len = 0;
-
-        byte[] tmpBuffer = getFloatArray(FloatToMBF(DateToInt(date, true)));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(open));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(high));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(low));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(close));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(volume));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getFloatArray(FloatToMBF(openInterest));
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        return len;
-    }
-
-    @Override
-    protected void parse() throws IOException {
-        date = readMBFDate();
-        open = readMBFFloat();
-        high = readMBFFloat();
-        low = readMBFFloat();
-        close = readMBFFloat();
-        volume = readMBFFloat();
-        openInterest = readMBFFloat();
     }
 }

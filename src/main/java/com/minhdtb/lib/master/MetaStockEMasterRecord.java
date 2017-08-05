@@ -1,6 +1,8 @@
 package com.minhdtb.lib.master;
 
 import com.google.common.io.LittleEndianDataInputStream;
+import com.minhdtb.lib.annotations.DataField;
+import com.minhdtb.lib.annotations.DataType;
 import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,13 +14,50 @@ import java.util.Date;
 @Data
 public final class MetaStockEMasterRecord extends MetaStockElement {
 
-    private String symbol;
-    private String description;
-    private String period;
+    @DataField(length = 2)
+    private byte[] spare;
+
+    @DataField(length = 1)
     private int fileNumber;
+
+    @DataField(length = 3)
+    private byte[] spare1;
+
+    @DataField(length = 1)
     private int totalFields;
+
+    @DataField(length = 4)
+    private byte[] spare2;
+
+    @DataField(length = 14)
+    private String symbol;
+
+    @DataField(length = 7)
+    private byte[] spare3;
+
+    @DataField(length = 16)
+    private String description;
+
+    @DataField(length = 12)
+    private byte[] spare4;
+
+    @DataField(length = 1)
+    private String period;
+
+    @DataField(length = 3)
+    private byte[] spare5;
+
+    @DataField(type = DataType.FLOAT)
     private Date startDate;
+
+    @DataField(length = 4)
+    private byte[] spare6;
+
+    @DataField(type = DataType.FLOAT)
     private Date endDate;
+
+    @DataField(length = 116)
+    private byte[] spare7;
 
     public MetaStockEMasterRecord(String symbol, String description, String period, int fileNumber,
                                   int totalFields, Date startDate, Date endDate) {
@@ -33,72 +72,5 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
 
     MetaStockEMasterRecord(LittleEndianDataInputStream is) throws IOException {
         super(is);
-    }
-
-    @Override
-    protected int encode(byte[] buffer) {
-        int len = 0;
-
-        byte[] tmpBuffer = {0x36, 0x36}; // Asc symbol
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = getByteArray((byte) fileNumber);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 3;
-
-        tmpBuffer = getByteArray((byte) totalFields);
-        len += copyBuffer(tmpBuffer, buffer, len);
-
-        tmpBuffer = new byte[]{0x7f}; // Delete symbol
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 1;
-
-        tmpBuffer = new byte[]{0x20}; // Space symbol
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 1;
-
-        symbol = symbol.length() > 14 ? symbol.substring(0, 14) : symbol;
-        tmpBuffer = getStringArray(symbol);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (14 - symbol.length()) + 7;
-
-        description = description.length() > 16 ? description.substring(0, 16) : description;
-        tmpBuffer = getStringArray(description);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (16 - description.length()) + 12;
-
-        period = period.length() > 1 ? period.substring(0, 1) : period;
-        tmpBuffer = getStringArray(period);
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += (1 - period.length()) + 3;
-
-        tmpBuffer = getFloatArray(DateToInt(startDate, true));
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 4;
-
-        tmpBuffer = getFloatArray(DateToInt(endDate, true));
-        len += copyBuffer(tmpBuffer, buffer, len);
-        len += 116;
-
-        return len;
-    }
-
-    @Override
-    protected void parse() throws IOException {
-        Skip(2);
-        fileNumber = readUnsignedByte();
-        Skip(3);
-        totalFields = readUnsignedByte();
-        Skip(4);
-        symbol = readString(14);
-        Skip(7);
-        description = readString(16);
-        Skip(12);
-        period = readString(1);
-        Skip(3);
-        startDate = readFloatDate();
-        Skip(4);
-        endDate = readFloatDate();
-        Skip(116);
     }
 }
