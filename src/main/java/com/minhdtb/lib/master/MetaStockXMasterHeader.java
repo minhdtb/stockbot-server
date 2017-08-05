@@ -37,7 +37,7 @@ final class MetaStockXMasterHeader extends MetaStockElement implements MetaStock
     MetaStockXMasterHeader(int totalFiles, int totalFilesExtend, int lastFileNumber) {
         this.magic = new byte[]{0x5D, (byte) 0xFE, 0x58, 0x4D, (byte) 0x8B, 0x02,
                 0x59, (byte) 0xB2, (byte) 0xC1, (byte) 0x8F};
-        
+
         this.totalFiles = totalFiles;
         this.totalFilesExtend = totalFilesExtend;
         this.lastFileNumber = lastFileNumber;
@@ -49,6 +49,6 @@ final class MetaStockXMasterHeader extends MetaStockElement implements MetaStock
 
     @Override
     public int count() {
-        return getTotalFiles() + 1;
+        return getTotalFiles();
     }
 }

@@ -25,7 +25,7 @@ public abstract class MetaStock<T extends MetaStockElement> {
             } else {
                 os = new LittleEndianDataOutputStream(new FileOutputStream(file));
             }
-            
+
             is = new LittleEndianDataInputStream(new FileInputStream(file));
             load();
         } catch (IOException e) {
