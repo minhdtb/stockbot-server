@@ -1,4 +1,4 @@
-package com.minhdtb.lib.master;
+package com.minhdtb.lib.masters;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.minhdtb.lib.annotations.DataField;

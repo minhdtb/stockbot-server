@@ -1,9 +1,8 @@
-import com.minhdtb.lib.MetaStockHistory;
-import com.minhdtb.lib.MetaStockHistoryData;
-import com.minhdtb.lib.MetaStockManager;
+import com.minhdtb.lib.manager.MetaStockHistory;
+import com.minhdtb.lib.manager.MetaStockHistoryData;
+import com.minhdtb.lib.manager.MetaStockManager;
 
 import java.io.IOException;
-import java.util.Date;
 
 public class MainApp {
 

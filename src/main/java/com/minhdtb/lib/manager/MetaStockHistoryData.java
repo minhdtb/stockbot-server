@@ -1,4 +1,4 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.manager;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

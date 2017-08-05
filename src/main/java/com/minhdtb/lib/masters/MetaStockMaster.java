@@ -1,4 +1,4 @@
-package com.minhdtb.lib.master;
+package com.minhdtb.lib.masters;
 
 import com.minhdtb.lib.base.MetaStock;
 import lombok.Data;

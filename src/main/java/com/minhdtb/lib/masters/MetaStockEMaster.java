@@ -1,4 +1,4 @@
-package com.minhdtb.lib.master;
+package com.minhdtb.lib.masters;
 
 import com.minhdtb.lib.base.MetaStock;
 import lombok.Data;
@@ -9,12 +9,11 @@ import java.io.IOException;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public final class MetaStockXMaster extends MetaStock<MetaStockXMasterRecord> {
+public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
 
-    private MetaStockXMasterHeader header;
+    private MetaStockEMasterHeader header;
 
-
-    public MetaStockXMaster(File file) {
+    public MetaStockEMaster(File file) {
         super(file);
     }
 
@@ -22,16 +21,16 @@ public final class MetaStockXMaster extends MetaStock<MetaStockXMasterRecord> {
     protected void load() throws IOException {
         getRecords().clear();
 
-        header = new MetaStockXMasterHeader(is);
+        header = new MetaStockEMasterHeader(is);
         for (int i = 0; i < header.count(); i++) {
-            MetaStockXMasterRecord data = new MetaStockXMasterRecord(is);
+            MetaStockEMasterRecord data = new MetaStockEMasterRecord(is);
             getRecords().add(data);
         }
     }
 
     @Override
     public void save() throws IOException {
-        header = new MetaStockXMasterHeader((short) getRecords().size(), (short) getRecords().size(), (short) getRecords().size());
+        header = new MetaStockEMasterHeader((short) getRecords().size(), (short) getRecords().size());
         write(header, os);
     }
 }

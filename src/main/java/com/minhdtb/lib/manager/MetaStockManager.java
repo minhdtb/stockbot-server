@@ -1,11 +1,11 @@
-package com.minhdtb.lib;
+package com.minhdtb.lib.manager;
 
 import com.minhdtb.lib.data.MetaStockData;
 import com.minhdtb.lib.data.MetaStockDataRecord;
-import com.minhdtb.lib.master.MetaStockMaster;
-import com.minhdtb.lib.master.MetaStockMasterRecord;
-import com.minhdtb.lib.master.MetaStockXMaster;
-import com.minhdtb.lib.master.MetaStockXMasterRecord;
+import com.minhdtb.lib.masters.MetaStockMaster;
+import com.minhdtb.lib.masters.MetaStockMasterRecord;
+import com.minhdtb.lib.masters.MetaStockXMaster;
+import com.minhdtb.lib.masters.MetaStockXMasterRecord;
 
 import java.io.File;
 import java.io.IOException;

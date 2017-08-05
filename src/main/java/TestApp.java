@@ -1,6 +1,11 @@
 import com.minhdtb.lib.data.MetaStockData;
 import com.minhdtb.lib.data.MetaStockDataRecord;
-import com.minhdtb.lib.master.*;
+import com.minhdtb.lib.masters.MetaStockEMaster;
+import com.minhdtb.lib.masters.MetaStockEMasterRecord;
+import com.minhdtb.lib.masters.MetaStockMaster;
+import com.minhdtb.lib.masters.MetaStockMasterRecord;
+import com.minhdtb.lib.masters.MetaStockXMaster;
+import com.minhdtb.lib.masters.MetaStockXMasterRecord;
 
 import java.io.File;
 import java.util.Date;
@@ -28,7 +33,7 @@ public class TestApp {
             MetaStockXMasterRecord xMasterRecord = xMaster.getRecords().get(xMaster.getRecords().size() - 1);
             System.out.println(xMasterRecord);
 
-            // read master file
+            // read masters file
             MetaStockMaster master = new MetaStockMaster(new File("E:\\test\\MASTER"));
             System.out.println(master.getHeader());
             MetaStockMasterRecord record1 = master.getRecords().get(0);
