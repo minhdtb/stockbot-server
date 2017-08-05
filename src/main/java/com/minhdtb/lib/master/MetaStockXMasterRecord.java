@@ -35,22 +35,22 @@ public final class MetaStockXMasterRecord extends MetaStockElement {
     @DataField(length = 13)
     private byte[] spare2;
 
-    @DataField(type = DataType.INTEGER)
+    @DataField(length = 4, type = DataType.INTEGER)
     private Date startDate;
 
     @DataField(length = 20)
     private byte[] spare3;
 
-    @DataField(type = DataType.INTEGER)
+    @DataField(length = 4, type = DataType.INTEGER)
     private Date endDate;
 
-    @DataField(type = DataType.INTEGER)
+    @DataField(length = 4, type = DataType.INTEGER)
     private Date firstDate;
 
     @DataField(length = 4)
     private byte[] spare4;
 
-    @DataField(type = DataType.INTEGER)
+    @DataField(length = 4, type = DataType.INTEGER)
     private Date lastDate;
 
     @DataField(length = 30)

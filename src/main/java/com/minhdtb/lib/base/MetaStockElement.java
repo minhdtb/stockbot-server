@@ -21,6 +21,21 @@ public abstract class MetaStockElement {
 
     }
 
+    public int getSize() {
+        int size = 0;
+
+        Class<? extends MetaStockElement> clazz = this.getClass();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(DataField.class)) {
+                DataField dataField = field.getAnnotation(DataField.class);
+                size += dataField.length();
+            }
+        }
+
+        return size;
+    }
+
     void write(LittleEndianDataOutputStream os) {
         Class<? extends MetaStockElement> clazz = this.getClass();
 

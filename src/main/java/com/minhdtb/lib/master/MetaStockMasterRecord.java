@@ -41,10 +41,10 @@ public class MetaStockMasterRecord extends MetaStockElement {
     @DataField(length = 1)
     private String version;
 
-    @DataField(type = DataType.MBF)
+    @DataField(length = 4, type = DataType.MBF)
     private Date startDate;
 
-    @DataField(type = DataType.MBF)
+    @DataField(length = 4, type = DataType.MBF)
     private Date endDate;
 
     @DataField(length = 1)

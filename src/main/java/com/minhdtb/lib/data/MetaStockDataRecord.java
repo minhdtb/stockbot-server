@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 public final class MetaStockDataRecord extends MetaStockElement {
 
-    @DataField(type = DataType.MBF)
+    @DataField(length = 4, type = DataType.MBF)
     private Date date;
 
     @DataField(length = 4)

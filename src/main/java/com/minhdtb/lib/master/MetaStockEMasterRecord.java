@@ -47,13 +47,13 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
     @DataField(length = 3)
     private byte[] spare5;
 
-    @DataField(type = DataType.FLOAT)
+    @DataField(length = 4, type = DataType.FLOAT)
     private Date startDate;
 
     @DataField(length = 4)
     private byte[] spare6;
 
-    @DataField(type = DataType.FLOAT)
+    @DataField(length = 4, type = DataType.FLOAT)
     private Date endDate;
 
     @DataField(length = 116)
