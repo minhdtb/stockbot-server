@@ -38,7 +38,7 @@ public final class MetaStockXMaster extends MetaStockMasterBase<MetaStockXMaster
     }
 
     @Override
-    protected void addRecord(MetaStockXMasterRecord record) {
+    public void addRecord(MetaStockXMasterRecord record) {
         try {
             getRecords().add(record);
             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");

@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 public class MetaStockHistory {
     private String symbol;
+    private String period;
     private Date startDate;
     private Date endDate;
     private int fileNumber;

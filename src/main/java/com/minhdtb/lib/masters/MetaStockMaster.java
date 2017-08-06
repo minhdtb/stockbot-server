@@ -38,7 +38,7 @@ public class MetaStockMaster extends MetaStockMasterBase<MetaStockMasterRecord> 
     }
 
     @Override
-    protected void addRecord(MetaStockMasterRecord record) {
+    public void addRecord(MetaStockMasterRecord record) {
         try {
             getRecords().add(record);
             RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
@@ -64,7 +64,7 @@ public class MetaStockMaster extends MetaStockMasterBase<MetaStockMasterRecord> 
 
     @Override
     public void updateRecord(MetaStockMasterRecord record) {
-        OptionalInt found = IntStream.range(0, getRecords().size() - 1).filter(value ->
+        OptionalInt found = IntStream.range(0, getRecords().size()).filter(value ->
                 Objects.equals(getRecords().get(value).getSymbol(), record.getSymbol())).findFirst();
         if (found.isPresent()) {
             updateAt(file, found.getAsInt(), record);

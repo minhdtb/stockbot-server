@@ -21,15 +21,12 @@ public class MetaStockMasterRecord extends MetaStockElement {
     private String fileType;
 
     @DataField(length = 1)
-    private byte[] spare;
-
-    @DataField(length = 1)
     private int recordLength;
 
     @DataField(length = 1)
     private int numberOfFields;
 
-    @DataField(length = 1)
+    @DataField(length = 2)
     private byte[] spare1;
 
     @DataField(length = 16)
@@ -56,8 +53,14 @@ public class MetaStockMasterRecord extends MetaStockElement {
     @DataField(length = 14)
     private String symbol;
 
-    @DataField(length = 3)
+    @DataField(length = 1)
     private byte[] spare4;
+
+    @DataField(length = 1)
+    private String flag;
+
+    @DataField(length = 1)
+    private byte[] spare5;
 
     public MetaStockMasterRecord(String symbol, String description, String period, int fileNumber, String fileType,
                                  int numberOfFields, String version, Date startDate, Date endDate) {
@@ -71,6 +74,7 @@ public class MetaStockMasterRecord extends MetaStockElement {
         this.version = version;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.flag = " ";
     }
 
     MetaStockMasterRecord(InputStream inputStream) throws IOException {
