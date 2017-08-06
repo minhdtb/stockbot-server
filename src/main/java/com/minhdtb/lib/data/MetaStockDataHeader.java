@@ -1,16 +1,13 @@
 package com.minhdtb.lib.data;
 
-import com.google.common.io.LittleEndianDataInputStream;
 import com.minhdtb.lib.annotations.DataField;
 import com.minhdtb.lib.base.MetaStockElement;
 import com.minhdtb.lib.base.MetaStockHeader;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -30,8 +27,8 @@ final class MetaStockDataHeader extends MetaStockElement implements MetaStockHea
         this.lastRecord = lastRecord;
     }
 
-    MetaStockDataHeader(InputStream inputStream, OutputStream outputStream) throws IOException {
-        super(inputStream, outputStream);
+    MetaStockDataHeader(InputStream inputStream) throws IOException {
+        super(inputStream);
     }
 
     @Override

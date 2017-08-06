@@ -17,19 +17,15 @@ public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
 
     private MetaStockEMasterHeader header;
 
-    private LittleEndianDataOutputStream outputStream;
     private LittleEndianDataInputStream inputStream;
+
+    public MetaStockEMaster() {
+
+    }
 
     public MetaStockEMaster(File file) {
         try {
-            if (file.exists()) {
-                this.outputStream = new LittleEndianDataOutputStream(new FileOutputStream(file, true));
-            } else {
-                this.outputStream = new LittleEndianDataOutputStream(new FileOutputStream(file));
-            }
-
             this.inputStream = new LittleEndianDataInputStream(new FileInputStream(file));
-
             load();
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,9 +36,9 @@ public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
     protected void load() throws IOException {
         getRecords().clear();
 
-        header = new MetaStockEMasterHeader(inputStream, outputStream);
+        header = new MetaStockEMasterHeader(inputStream);
         for (int i = 0; i < header.count(); i++) {
-            MetaStockEMasterRecord data = new MetaStockEMasterRecord(inputStream, outputStream);
+            MetaStockEMasterRecord data = new MetaStockEMasterRecord(inputStream);
             getRecords().add(data);
         }
     }
@@ -53,8 +49,12 @@ public final class MetaStockEMaster extends MetaStock<MetaStockEMasterRecord> {
     }
 
     @Override
-    public void save() throws IOException {
+    public void save(File file) throws IOException {
+        LittleEndianDataOutputStream outputStream = new LittleEndianDataOutputStream(new FileOutputStream(file));
         header = new MetaStockEMasterHeader((short) getRecords().size(), (short) getRecords().size());
-        write(header);
+        header.write(outputStream);
+        for (MetaStockEMasterRecord record : getRecords()) {
+            record.write(outputStream);
+        }
     }
 }

@@ -18,32 +18,30 @@ import static java.nio.ByteBuffer.wrap;
 
 public abstract class MetaStockElement {
 
-    private OutputStream outputStream;
     private InputStream inputStream;
 
     protected MetaStockElement() {
 
     }
 
-    protected MetaStockElement(InputStream inputStream, OutputStream outputStream) throws IOException {
+    protected MetaStockElement(InputStream inputStream) throws IOException {
         this.inputStream = inputStream;
-        this.outputStream = outputStream;
         this.read();
     }
 
-    public void write() {
+    public void write(OutputStream outputStream) {
         writeBuffer(outputStream);
     }
 
-    public void read() {
+    private void read() {
         readBuffer(inputStream);
     }
 
     public byte[] toByteArray() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(getSize());
-        writeBuffer(outputStream);
+        ByteArrayOutputStream os = new ByteArrayOutputStream(getSize());
+        writeBuffer(os);
 
-        return outputStream.toByteArray();
+        return os.toByteArray();
     }
 
     private int getSize() {

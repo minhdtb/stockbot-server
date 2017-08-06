@@ -40,7 +40,7 @@ public class TestApp {
             System.out.println(record1);
 
             //===============================================
-            MetaStockEMaster eMaster1 = new MetaStockEMaster(new File("E:\\test2\\EMASTER"));
+            MetaStockEMaster eMaster1 = new MetaStockEMaster();
             MetaStockEMasterRecord eMasterRecord1 = new MetaStockEMasterRecord(
                     "AAA",
                     "AAA",
@@ -48,10 +48,10 @@ public class TestApp {
                     1,
                     7, new Date(), new Date());
             eMaster1.getRecords().add(eMasterRecord1);
-            eMaster1.save();
+            eMaster1.save(new File("E:\\test2\\EMASTER"));
 
 
-            MetaStockMaster master1 = new MetaStockMaster(new File("E:\\test2\\MASTER"));
+            MetaStockMaster master1 = new MetaStockMaster();
             MetaStockMasterRecord record2 = new MetaStockMasterRecord("AAA", "AAA", "D", 1,
                     "e", 7, null, new Date(), new Date());
 
@@ -60,19 +60,19 @@ public class TestApp {
                     "e", 7, null, new Date(), new Date());
 
             master1.getRecords().add(record3);
-            master1.save();
+            master1.save(new File("E:\\test2\\MASTER"));
 
-            MetaStockXMaster xMaster1 = new MetaStockXMaster(new File("E:\\test2\\XMASTER"));
+            MetaStockXMaster xMaster1 = new MetaStockXMaster();
             MetaStockXMasterRecord xMasterRecord1 = new MetaStockXMasterRecord("XYZT", "XYZT", "D", 1000, new Date(),
                     new Date(), new Date(), new Date());
 
             xMaster1.getRecords().add(xMasterRecord1);
-            xMaster1.save();
+            xMaster1.save(new File("E:\\test2\\XMASTER"));
 
             MetaStockData data1 = new MetaStockData(new File("E:\\test2\\F1.DAT"));
             MetaStockDataRecord dataRecord = new MetaStockDataRecord(new Date(), 10, 10, 10, 10, 10, 10);
             data1.getRecords().add(dataRecord);
-            data1.save();
+            data1.save(new File("E:\\test2\\F1.DAT"));
 
             //============================================================
 
