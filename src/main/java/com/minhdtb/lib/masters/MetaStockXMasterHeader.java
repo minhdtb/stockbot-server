@@ -7,7 +7,10 @@ import com.minhdtb.lib.base.MetaStockHeader;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -43,8 +46,8 @@ final class MetaStockXMasterHeader extends MetaStockElement implements MetaStock
         this.lastFileNumber = lastFileNumber;
     }
 
-    MetaStockXMasterHeader(LittleEndianDataInputStream is) throws IOException {
-        super(is);
+    MetaStockXMasterHeader(InputStream inputStream, OutputStream outputStream) throws IOException {
+        super(inputStream, outputStream);
     }
 
     @Override

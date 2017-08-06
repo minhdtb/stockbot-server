@@ -1,9 +1,6 @@
 package com.minhdtb.lib.base;
 
-import com.google.common.io.LittleEndianDataInputStream;
-import com.google.common.io.LittleEndianDataOutputStream;
-
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,28 +12,13 @@ public abstract class MetaStock<T extends MetaStockElement> {
 
     protected abstract void load() throws IOException;
 
-    protected LittleEndianDataOutputStream os;
-    protected LittleEndianDataInputStream is;
+    protected abstract void addRecord(T record);
 
-    public MetaStock(File file) {
-        try {
-            if (file.exists()) {
-                os = new LittleEndianDataOutputStream(new FileOutputStream(file, true));
-            } else {
-                os = new LittleEndianDataOutputStream(new FileOutputStream(file));
-            }
 
-            is = new LittleEndianDataInputStream(new FileInputStream(file));
-            load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void write(MetaStockElement header, LittleEndianDataOutputStream os) throws IOException {
-        header.write(os);
+    protected void write(MetaStockElement header) throws IOException {
+        header.write();
         for (T record : getRecords()) {
-            record.write(os);
+            record.write();
         }
     }
 

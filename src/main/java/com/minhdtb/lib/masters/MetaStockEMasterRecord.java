@@ -7,7 +7,10 @@ import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -70,7 +73,7 @@ public final class MetaStockEMasterRecord extends MetaStockElement {
         this.endDate = endDate;
     }
 
-    MetaStockEMasterRecord(LittleEndianDataInputStream is) throws IOException {
-        super(is);
+    MetaStockEMasterRecord(InputStream inputStream, OutputStream outputStream) throws IOException {
+        super(inputStream, outputStream);
     }
 }

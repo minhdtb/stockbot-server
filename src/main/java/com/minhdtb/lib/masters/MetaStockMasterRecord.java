@@ -1,13 +1,15 @@
 package com.minhdtb.lib.masters;
 
-import com.google.common.io.LittleEndianDataInputStream;
 import com.minhdtb.lib.annotations.DataField;
 import com.minhdtb.lib.annotations.DataType;
 import com.minhdtb.lib.base.MetaStockElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
@@ -73,7 +75,7 @@ public class MetaStockMasterRecord extends MetaStockElement {
         this.endDate = endDate;
     }
 
-    MetaStockMasterRecord(LittleEndianDataInputStream is) throws IOException {
-        super(is);
+    MetaStockMasterRecord(InputStream inputStream, OutputStream outputStream) throws IOException {
+        super(inputStream, outputStream);
     }
 }
