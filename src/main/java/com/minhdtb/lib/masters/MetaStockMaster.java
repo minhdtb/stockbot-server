@@ -2,31 +2,25 @@ package com.minhdtb.lib.masters;
 
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
-import com.minhdtb.lib.base.MetaStock;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.minhdtb.lib.base.MetaStockMasterBase;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-public class MetaStockMaster extends MetaStock<MetaStockMasterRecord> {
-
-    private MetaStockMasterHeader header;
+public class MetaStockMaster extends MetaStockMasterBase<MetaStockMasterRecord> {
 
     private LittleEndianDataInputStream inputStream;
-
-    public MetaStockMaster() {
-
-    }
+    private File file;
 
     public MetaStockMaster(File file) {
         try {
-            this.inputStream = new LittleEndianDataInputStream(new FileInputStream(file));
-            load();
+            this.file = file;
+            if (file.exists()) {
+                this.inputStream = new LittleEndianDataInputStream(new FileInputStream(file));
+                load();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,16 +39,35 @@ public class MetaStockMaster extends MetaStock<MetaStockMasterRecord> {
 
     @Override
     protected void addRecord(MetaStockMasterRecord record) {
-
+        try {
+            getRecords().add(record);
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            header = new MetaStockMasterHeader((short) getRecords().size(), (short) getRecords().size());
+            randomAccessFile.seek(0);
+            randomAccessFile.write(header.toByteArray());
+            randomAccessFile.seek(randomAccessFile.length());
+            randomAccessFile.write(record.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void save(File file) throws IOException {
+    public void save() throws IOException {
         LittleEndianDataOutputStream outputStream = new LittleEndianDataOutputStream(new FileOutputStream(file));
         header = new MetaStockMasterHeader((short) getRecords().size(), (short) getRecords().size());
         header.write(outputStream);
         for (MetaStockMasterRecord record : getRecords()) {
             record.write(outputStream);
+        }
+    }
+
+    @Override
+    public void updateRecord(MetaStockMasterRecord record) {
+        OptionalInt found = IntStream.range(0, getRecords().size() - 1).filter(value ->
+                Objects.equals(getRecords().get(value).getSymbol(), record.getSymbol())).findFirst();
+        if (found.isPresent()) {
+            updateAt(file, found.getAsInt(), record);
         }
     }
 }

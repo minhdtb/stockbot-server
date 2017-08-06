@@ -3,30 +3,21 @@ package com.minhdtb.lib.data;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
 import com.minhdtb.lib.base.MetaStock;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
 
-    private MetaStockDataHeader header;
-
     private LittleEndianDataInputStream inputStream;
-
-    public MetaStockData() {
-
-    }
+    private File file;
 
     public MetaStockData(File file) {
         try {
-            this.inputStream = new LittleEndianDataInputStream(new FileInputStream(file));
-            load();
+            this.file = file;
+            if (file.exists()) {
+                this.inputStream = new LittleEndianDataInputStream(new FileInputStream(file));
+                load();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,11 +36,21 @@ public final class MetaStockData extends MetaStock<MetaStockDataRecord> {
 
     @Override
     public void addRecord(MetaStockDataRecord record) {
-
+        try {
+            getRecords().add(record);
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            header = new MetaStockDataHeader((short) getRecords().size(), (short) (getRecords().size() + 1));
+            randomAccessFile.seek(0);
+            randomAccessFile.write(header.toByteArray());
+            randomAccessFile.seek(randomAccessFile.length());
+            randomAccessFile.write(record.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void save(File file) throws IOException {
+    public void save() throws IOException {
         LittleEndianDataOutputStream outputStream = new LittleEndianDataOutputStream(new FileOutputStream(file));
         header = new MetaStockDataHeader((short) getRecords().size(), (short) (getRecords().size() + 1));
         header.write(outputStream);

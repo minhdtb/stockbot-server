@@ -3,10 +3,7 @@ package com.minhdtb.lib.base;
 import com.minhdtb.lib.annotations.DataField;
 import com.minhdtb.lib.annotations.DataType;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.security.InvalidParameterException;
@@ -44,7 +41,7 @@ public abstract class MetaStockElement {
         return os.toByteArray();
     }
 
-    private int getSize() {
+    public int getSize() {
         int size = 0;
 
         Class<? extends MetaStockElement> clazz = this.getClass();
@@ -108,12 +105,17 @@ public abstract class MetaStockElement {
                 DataField dataField = field.getAnnotation(DataField.class);
                 try {
                     if (field.getName().toLowerCase().contains("spare")) {
-                        is.skip(dataField.length());
+                        long i = is.skip(dataField.length());
+                        if (i == -1) {
+                            throw new EOFException("An error occurred while reading buffer.");
+                        }
                     } else {
                         field.setAccessible(true);
                         byte[] buffer = new byte[dataField.length()];
-                        is.read(buffer);
-
+                        int i = is.read(buffer);
+                        if (i == -1) {
+                            throw new EOFException("An error occurred while reading buffer.");
+                        }
                         if (field.getType() == byte[].class) {
                             field.set(this, buffer);
                         } else if (field.getType() == int.class && dataField.length() == 2) {

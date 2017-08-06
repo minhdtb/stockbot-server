@@ -1,7 +1,6 @@
 package com.minhdtb.lib.masters;
 
 import com.minhdtb.lib.annotations.DataField;
-import com.minhdtb.lib.base.MetaStockElement;
 import com.minhdtb.lib.base.MetaStockHeader;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,7 @@ import java.io.InputStream;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-final class MetaStockXMasterHeader extends MetaStockElement implements MetaStockHeader {
+final class MetaStockXMasterHeader extends MetaStockHeader {
 
     @DataField(length = 10)
     private byte[] magic;
